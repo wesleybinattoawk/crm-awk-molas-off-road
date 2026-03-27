@@ -10,23 +10,66 @@ import { toast } from "sonner";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      newErrors.email = "Email é obrigatório";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      newErrors.email = "Email inválido";
+    }
+
+    if (!password) {
+      newErrors.password = "Senha é obrigatória";
+    } else if (password.length < 6) {
+      newErrors.password = "Senha deve ter no mínimo 6 caracteres";
+    }
+
+    if (isSignUp) {
+      if (!name.trim()) {
+        newErrors.name = "Nome é obrigatório";
+      } else if (name.trim().length < 2) {
+        newErrors.name = "Nome deve ter no mínimo 2 caracteres";
+      }
+      if (password !== confirmPassword) {
+        newErrors.confirmPassword = "As senhas não coincidem";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validate()) return;
     setLoading(true);
 
     if (isSignUp) {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: { data: { full_name: name.trim() } },
+      });
       if (error) {
         toast.error(error.message);
       } else {
-        toast.success("Conta criada! Verifique seu email.");
+        toast.success("Conta criada com sucesso!");
+        navigate("/");
       }
     } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
       if (error) {
         toast.error("Email ou senha incorretos");
       } else {
