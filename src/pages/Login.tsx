@@ -138,7 +138,6 @@ const Login = () => {
                 {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword}</p>}
               </div>
             )}
-            </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Carregando..." : isSignUp ? "Criar conta" : "Entrar"}
             </Button>
