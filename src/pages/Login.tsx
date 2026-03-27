@@ -90,6 +90,19 @@ const Login = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {isSignUp && (
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Seu nome completo"
+                />
+                {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -97,8 +110,9 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
+                placeholder="seu@email.com"
               />
+              {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
@@ -107,9 +121,23 @@ const Login = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
+                placeholder="Mínimo 6 caracteres"
               />
+              {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
+            </div>
+            {isSignUp && (
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Repita a senha"
+                />
+                {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword}</p>}
+              </div>
+            )}
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Carregando..." : isSignUp ? "Criar conta" : "Entrar"}
